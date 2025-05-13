@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Marketing Agent</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 50px auto; padding: 20px; }
+    input, select, button { width: 100%; margin: 10px 0; padding: 10px; font-size: 16px; }
+    #result { white-space: pre-wrap; background: #f4f4f4; padding: 10px; border-radius: 5px; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>AI Marketing Agent</h1>
+  <p>Fill in the form below and get influencer suggestions + outreach messages powered by AI.</p>
+
+  <form id="agentForm">
+    <input type="text" id="niche" placeholder="Enter your niche (e.g. fitness, skincare)" required />
+    <input type="text" id="goal" placeholder="Enter your goal (e.g. boost sales, visibility)" required />
+    <select id="language">
+      <option value="en">English</option>
+      <option value="bg">Bulgarian</option>
+    </select>
+    <button type="submit">Generate (Free Trial)</button>
+  </form>
+
+  <div id="result"></div>
+
+  <hr />
+  <h2>Unlimited Access</h2>
+  <p>Want unlimited access? Click below to upgrade for only <strong>$4.99</strong>.</p>
+  <a href="https://buy.stripe.com/test_4gw3eV3Bc3TA6Lm4gg" target="_blank">
+    <button>Unlock Full Access</button>
+  </a>
+
+  <script>
+    document.getElementById("agentForm").addEventListener("submit", async function (e) {
+      e.preventDefault();
+      const niche = document.getElementById("niche").value;
+      const goal = document.getElementById("goal").value;
+      const lang = document.getElementById("language").value;
+
+      const prompt = `You are an AI marketing agent.\nNiche: ${niche}\nGoal: ${goal}\nLanguage: ${lang}\n\nGenerate:\n1. 5 example TikTok/Instagram influencers\n2. A cold outreach message\n3. 3 content ideas\n4. Best times to post`;
+
+      document.getElementById("result").textContent = "Generating response...";
+
+      try {
+        const res = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer PASTE YOUR KEY HERE"
+          },
+          body: JSON.stringify({
+            model: "gpt-3.5-turbo",
+            messages: [{ role: "user", content: prompt }],
+            max_tokens: 700,
+            temperature: 0.7
+          })
+        });
+
+        const data = await res.json();
+        document.getElementById("result").textContent = data.choices[0].message.content;
+      } catch (err) {
+        document.getElementById("result").textContent = "Error: " + err.message;
+      }
+    });
+  </script>
+</body>
+</html>
